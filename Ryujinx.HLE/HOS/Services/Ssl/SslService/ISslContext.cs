@@ -6,21 +6,36 @@ namespace Ryujinx.HLE.HOS.Services.Ssl.SslService
 {
     class ISslContext : IpcService
     {
+        private uint _connectionCount;
+
         private ulong _serverCertificateId;
         private ulong _clientCertificateId;
 
         public ISslContext(ServiceCtx context) { }
 
-        [Command(2)]
+        [CommandHipc(2)]
         // CreateConnection() -> object<nn::ssl::sf::ISslConnection>
         public ResultCode CreateConnection(ServiceCtx context)
         {
             MakeObject(context, new ISslConnection());
 
+            _connectionCount++;
+
             return ResultCode.Success;
         }
 
-        [Command(4)]
+        [CommandHipc(3)]
+        // GetConnectionCount() -> u32 count
+        public ResultCode GetConnectionCount(ServiceCtx context)
+        {
+            context.ResponseData.Write(_connectionCount);
+
+            Logger.Stub?.PrintStub(LogClass.ServiceSsl, new { _connectionCount });
+
+            return ResultCode.Success;
+        }
+
+        [CommandHipc(4)]
         // ImportServerPki(nn::ssl::sf::CertificateFormat certificateFormat, buffer<bytes, 5> certificate) -> u64 certificateId
         public ResultCode ImportServerPki(ServiceCtx context)
         {
@@ -36,7 +51,7 @@ namespace Ryujinx.HLE.HOS.Services.Ssl.SslService
             return ResultCode.Success;
         }
 
-        [Command(5)]
+        [CommandHipc(5)]
         // ImportClientPki(buffer<bytes, 5> certificate, buffer<bytes, 5> ascii_password) -> u64 certificateId
         public ResultCode ImportClientPki(ServiceCtx context)
         {

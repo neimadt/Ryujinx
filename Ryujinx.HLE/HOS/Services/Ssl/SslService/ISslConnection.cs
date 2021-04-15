@@ -8,7 +8,7 @@ namespace Ryujinx.HLE.HOS.Services.Ssl.SslService
     {
         public ISslConnection() { }
 
-        [Command(0)]
+        [CommandHipc(0)]
         // SetSocketDescriptor(u32) -> u32
         public ResultCode SetSocketDescriptor(ServiceCtx context)
         {
@@ -22,7 +22,7 @@ namespace Ryujinx.HLE.HOS.Services.Ssl.SslService
             return ResultCode.Success;
         }
 
-        [Command(1)]
+        [CommandHipc(1)]
         // SetHostName(buffer<bytes, 5>)
         public ResultCode SetHostName(ServiceCtx context)
         {
@@ -40,7 +40,7 @@ namespace Ryujinx.HLE.HOS.Services.Ssl.SslService
             return ResultCode.Success;
         }
 
-        [Command(2)]
+        [CommandHipc(2)]
         // SetVerifyOption(nn::ssl::sf::VerifyOption)
         public ResultCode SetVerifyOption(ServiceCtx context)
         {
@@ -51,7 +51,7 @@ namespace Ryujinx.HLE.HOS.Services.Ssl.SslService
             return ResultCode.Success;
         }
 
-        [Command(3)]
+        [CommandHipc(3)]
         // SetIoMode(nn::ssl::sf::IoMode)
         public ResultCode SetIoMode(ServiceCtx context)
         {
@@ -62,7 +62,7 @@ namespace Ryujinx.HLE.HOS.Services.Ssl.SslService
             return ResultCode.Success;
         }
 
-        [Command(8)]
+        [CommandHipc(8)]
         // DoHandshake()
         public ResultCode DoHandshake(ServiceCtx context)
         {
@@ -71,14 +71,19 @@ namespace Ryujinx.HLE.HOS.Services.Ssl.SslService
             return ResultCode.Success;
         }
 
-        [Command(11)]
+        [CommandHipc(11)]
         // Write(buffer<bytes, 5>) -> u32
         public ResultCode Write(ServiceCtx context)
         {
             long inputDataPosition = context.Request.SendBuff[0].Position;
             long inputDataSize     = context.Request.SendBuff[0].Size;
 
-            uint transferredSize = 0;
+            byte[] data = new byte[inputDataSize];
+
+            context.Memory.Read((ulong)inputDataPosition, data);
+
+            // NOTE: Tell the guest everything is transferred.
+            uint transferredSize = (uint)inputDataSize;
 
             context.ResponseData.Write(transferredSize);
 
@@ -87,7 +92,7 @@ namespace Ryujinx.HLE.HOS.Services.Ssl.SslService
             return ResultCode.Success;
         }
 
-        [Command(17)]
+        [CommandHipc(17)]
         // SetSessionCacheMode(nn::ssl::sf::SessionCacheMode)
         public ResultCode SetSessionCacheMode(ServiceCtx context)
         {
@@ -98,7 +103,7 @@ namespace Ryujinx.HLE.HOS.Services.Ssl.SslService
             return ResultCode.Success;
         }
 
-        [Command(22)]
+        [CommandHipc(22)]
         // SetOption(b8, nn::ssl::sf::OptionType)
         public ResultCode SetOption(ServiceCtx context)
         {
