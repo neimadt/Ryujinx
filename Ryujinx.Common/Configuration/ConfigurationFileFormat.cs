@@ -14,9 +14,14 @@ namespace Ryujinx.Configuration
         /// <summary>
         /// The current version of the file format
         /// </summary>
-        public const int CurrentVersion = 24;
+        public const int CurrentVersion = 25;
 
         public int Version { get; set; }
+
+        /// <summary>
+        /// Enables or disables logging to a file on disk
+        /// </summary>
+        public bool EnableFileLog { get; set; }
 
         /// <summary>
         /// Resolution Scale. An integer scale applied to applicable render targets. Values 1-4, or -1 to use a custom floating point scale instead.
@@ -88,10 +93,6 @@ namespace Ryujinx.Configuration
         /// </summary>
         public GraphicsDebugLevel LoggingGraphicsDebugLevel { get; set; }
 
-        /// <summary>
-        /// Enables or disables logging to a file on disk
-        /// </summary>
-        public bool EnableFileLog { get; set; }
 
         /// <summary>
         /// Change System Language
